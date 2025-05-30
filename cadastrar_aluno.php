@@ -1,11 +1,7 @@
 <?php
-// Incluir o arquivo de conexão
 include "conexao.php";
-
-// Iniciar a sessão para recuperar o professor_id
 session_start();
 
-// Verificar se o professor está logado
 if (!isset($_SESSION['professor_id'])) {
     header("Location: login.php");
     exit();
@@ -41,7 +37,7 @@ $result_alunos = $conn->query($sql_alunos);
     <title>Dashboard - Cadastrar Aluno</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             background-image: url('https://images5.alphacoders.com/680/thumb-1920-680432.jpg');
             background-size: cover;
             background-position: center;
@@ -51,23 +47,26 @@ $result_alunos = $conn->query($sql_alunos);
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow: hidden;
         }
 
         .container {
-            background-color: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(8px);
-            padding: 30px 40px;
-            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(12px) saturate(150%);
+            padding: 40px 50px;
+            border-radius: 15px;
             width: 100%;
             max-width: 500px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         h2 {
             text-align: center;
-            color: #2c3e50;
-            margin-bottom: 25px;
-            font-size: 26px;
+            color: #E0CFFD;
+            margin-bottom: 30px;
+            font-size: 28px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
         }
 
         form {
@@ -77,46 +76,49 @@ $result_alunos = $conn->query($sql_alunos);
 
         label {
             font-weight: bold;
-            color: #333;
-            margin-bottom: 5px;
+            color: #F0E9FF;
+            margin-bottom: 6px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
         }
 
         input[type="text"],
         input[type="email"] {
             width: 100%;
-            padding: 12px;
-            margin-bottom: 18px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            box-sizing: border-box;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
             font-size: 16px;
-            background: rgba(255, 255, 255, 0.9);
-            transition: border 0.3s ease;
+            backdrop-filter: blur(5px);
+            transition: border 0.3s ease, background 0.3s ease;
         }
 
         input[type="text"]:focus,
         input[type="email"]:focus {
-            border: 1px solid #6c5ce7;
+            border: 1px solid #A29BFE;
+            background: rgba(255, 255, 255, 0.15);
             outline: none;
         }
 
         button {
             width: 100%;
-            background: linear-gradient(45deg, #6c5ce7, #a29bfe);
-            color: white;
-            padding: 14px;
+            background: linear-gradient(135deg, #8e44ad, #6c5ce7, #2980b9);
+            color: #fff;
+            padding: 15px;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            transition: background 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+            transition: background 0.4s ease, transform 0.2s ease;
         }
 
         button:hover {
-            background: linear-gradient(45deg, #a29bfe, #6c5ce7);
-            transform: scale(1.03);
+            background: linear-gradient(135deg, #6c5ce7, #8e44ad, #3498db);
+            transform: scale(1.05);
         }
     </style>
 </head>

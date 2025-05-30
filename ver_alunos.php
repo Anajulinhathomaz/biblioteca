@@ -1,108 +1,138 @@
 <?php 
 $servername = "localhost";
-$username = "root"; // seu usuário do banco de dados
-$password = ""; // sua senha do banco de dados
-$dbname = "biblioteca"; // nome do seu banco de dados
+$username = "root"; 
+$password = ""; 
+$dbname = "biblioteca"; 
 
-// Criar conexão
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// Verificar conexão
 if ($conn->connect_error) {
     die("Conexão falhou: " . $conn->connect_error);
 }
 
-// Função para listar alunos
 function listarAlunos($conn) {
     $sql = "SELECT * FROM alunos";
     $result = $conn->query($sql);
     return $result;
 }
 
-// Função para deletar aluno
 if (isset($_GET['deletar'])) {
     $id = intval($_GET['deletar']);
     $sql = "DELETE FROM alunos WHERE id=$id";
     $conn->query($sql);
-    header("Location: " . strtok($_SERVER["REQUEST_URI"],'?')); // redireciona para a mesma página sem parâmetros
+    header("Location: " . strtok($_SERVER["REQUEST_URI"],'?'));
     exit;
 }
 
-// Listar alunos
 $alunos = listarAlunos($conn);
 ?>
 
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8">
     <title>Lista de Alunos</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #E5CCFF;
+        * {
             margin: 0;
-            height: 100vh;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-image: url('https://c4.wallpaperflare.com/wallpaper/156/861/196/movies-tangled-disney-rapunzel-wallpaper-preview.jpg');
+            background-size: cover;
+            background-position: center;
+            font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
+            height: 100vh;
+            color: #fff;
         }
+
         .container {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             width: 90%;
-            max-width: 800px;
-            background-color: #fff;
-            padding: 20px 30px;
-            border-radius: 8px;
-            box-shadow: 0 0 12px rgba(0,0,0,0.1);
+            max-width: 900px;
+            backdrop-filter: blur(5px);
         }
+
         h1 {
             text-align: center;
-            color: #2c3e50;
-            margin-bottom: 25px;
+            color: #f0e6ff;
+            margin-bottom: 20px;
+            font-size: 26px;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 20px;
+            backdrop-filter: blur(2px);
         }
+
         table th, table td {
-            padding: 12px 10px;
-            border: 1px solid #ddd;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
             text-align: center;
+            color: #fff;
         }
+
         table th {
-            background-color: #3498db;
-            color: white;
+            background: linear-gradient(45deg, #a76cfd, #ff89e9);
+            font-weight: bold;
         }
+
         table tr:nth-child(even) {
-            background-color: #f9f9f9;
+            background-color: rgba(255, 255, 255, 0.1);
         }
+
         a.deletar {
-            color: #e74c3c;
+            display: inline-block;
+            padding: 8px 12px;
+            background: linear-gradient(45deg, #e57373, #ff6f61);
+            color: #fff;
+            border-radius: 5px;
             font-weight: bold;
             text-decoration: none;
-            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
+
         a.deletar:hover {
-            text-decoration: underline;
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .sem-aluno {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 16px;
+            color: #f5f5f5;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Lista de Alunos</h1>
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nome</th>
-                    <th>Série</th>
-                    <th>Email</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php if ($alunos->num_rows > 0): ?>
+        <?php if ($alunos->num_rows > 0): ?>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Série</th>
+                        <th>Email</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
                     <?php while($row = $alunos->fetch_assoc()): ?>
                         <tr>
                             <td><?= htmlspecialchars($row['id']) ?></td>
@@ -114,13 +144,11 @@ $alunos = listarAlunos($conn);
                             </td>
                         </tr>
                     <?php endwhile; ?>
-                <?php else: ?>
-                    <tr>
-                        <td colspan="5">Nenhum aluno encontrado.</td>
-                    </tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <div class="sem-aluno">Nenhum aluno encontrado.</div>
+        <?php endif; ?>
     </div>
 
     <?php $conn->close(); ?>
