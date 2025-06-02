@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// Verificar se o professor está logado
 if (!isset($_SESSION['professor_id'])) {
     header("Location: login.php");
     exit();
@@ -29,6 +28,19 @@ $nomeProfessor = $_SESSION['nome'];
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            color: #F8F1FF;
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            width: 320px;
+            backdrop-filter: blur(5px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         h2 {
@@ -36,33 +48,30 @@ $nomeProfessor = $_SESSION['nome'];
             color: #F8F1FF;
             font-weight: 700;
             text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+            text-align: center;
         }
 
         .link-box {
+            display: block;
             background: rgba(255, 255, 255, 0.85);
             margin: 15px 0;
             padding: 15px 0;
-            width: 280px;
+            width: 100%;
             border-radius: 10px;
             box-shadow: 0 6px 12px rgba(0,0,0,0.2);
             font-weight: 600;
             font-size: 18px;
             transition: background-color 0.3s ease, transform 0.3s ease;
             backdrop-filter: blur(5px);
-        }
-
-        .link-box a {
-            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
             color: #6C3483;
-            display: block;
+            text-decoration: none;
         }
 
         .link-box:hover {
             background-color: rgba(171, 70, 209, 0.9);
             transform: scale(1.05);
-        }
-
-        .link-box:hover a {
             color: white;
         }
 
@@ -87,20 +96,14 @@ $nomeProfessor = $_SESSION['nome'];
     </style>
 </head>
 <body>
-    <h2>Bem-vindo, <?php echo htmlspecialchars($nomeProfessor); ?>!</h2>
+    <div class="container">
+        <h2>Bem-vindo, <?php echo htmlspecialchars($nomeProfessor); ?>!</h2>
 
-    <div class="link-box">
-        <a href="cadastros.php">Cadastros</a>
-    </div>
+        <a class="link-box" href="cadastros.php">Cadastros</a>
+        <a class="link-box" href="emprestimo.php">Registrar Empréstimo</a>
+        <a class="link-box" href="informacoes.php">Informações Gerais</a>
 
-    <div class="link-box">
-        <a href="registrar_emprestimo.php">Registrar Empréstimo</a>
+        <a class="logout" href="logout.php">Sair</a>
     </div>
-  
-    <div class="link-box">
-        <a href="informacoes_gerais.php">Informações Gerais</a>
-    </div>
-
-    <a class="logout" href="logout.php">Sair</a>
 </body>
 </html>
