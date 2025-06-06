@@ -35,20 +35,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: Arial, sans-serif;
+            font-family: 'Georgia', serif;
         }
 
         body {
-            background-color: #f0f2f5;
-            min-height: 100vh;
+            background: url('./imagens/enrolados_biblioteca5.png') no-repeat center center fixed;
+            background-size: cover;
+            /* min-height: 100vh;
             padding: 20px;
+            backdrop-filter: blur(3px); */
         }
 
         .container {
-            background: #fff;
+            background: rgba(255, 248, 220, 0.9); /* cor clara com transparência */
             padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
             width: 400px;
             max-width: 90%;
             text-align: center;
@@ -58,15 +60,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         h1 {
             margin-bottom: 20px;
             font-size: 24px;
-            color: #333;
+            color: #4b2e15;
         }
 
         input[type="text"] {
             width: 100%;
             padding: 10px;
             margin-bottom: 15px;
-            border: 1px solid #ccc;
+            border: 1px solid #bfa17b;
             border-radius: 5px;
+            background-color: #fffbe6;
         }
 
         #resultados {
@@ -75,11 +78,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             max-height: 600px;
             overflow-y: auto;
             padding: 20px;
-            background: #fff;
+            background: rgba(255, 248, 220, 0.9);
             border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
             margin: 0 auto;
-            display: none; /* escondido inicialmente */
+            display: none;
         }
 
         .livro {
@@ -88,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             margin-bottom: 20px;
             padding: 20px;
             border-radius: 8px;
-            background: #f9f9f9;
+            background: #fffdf7;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             gap: 20px;
         }
@@ -108,22 +111,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .descricao {
             margin-top: 10px;
             font-size: 0.95em;
-            color: #555;
+            color: #5c4328;
         }
 
         button {
-            padding: 8px 16px;
-            background: #4CAF50;
-            color: #fff;
+            padding: 10px 20px;
+            background: #6b4226;
+            color: #fff8dc;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             margin-top: 10px;
-            transition: background 0.3s ease;
+            font-weight: bold;
+            transition: background 0.3s ease, transform 0.2s ease;
         }
 
         button:hover {
-            background: #45a049;
+            background: #c1975f;
+            color: #3a2a1a;
+            transform: scale(1.05);
         }
     </style>
 </head>
@@ -144,7 +150,7 @@ input.addEventListener('keyup', function() {
     const termo = input.value.trim();
     if (termo.length < 3) {
         resultados.innerHTML = '';
-        resultados.style.display = 'none'; // esconde quando vazio
+        resultados.style.display = 'none';
         return;
     }
 
@@ -154,7 +160,7 @@ input.addEventListener('keyup', function() {
             resultados.innerHTML = '';
 
             if (data.items) {
-                resultados.style.display = 'block'; // mostra resultados
+                resultados.style.display = 'block';
                 data.items.forEach(item => {
                     const info = item.volumeInfo;
                     const titulo = info.title || 'Sem título';
@@ -178,7 +184,7 @@ input.addEventListener('keyup', function() {
                     resultados.appendChild(div);
                 });
             } else {
-                resultados.style.display = 'block'; // mostra a mensagem
+                resultados.style.display = 'block';
                 resultados.innerHTML = '<p>Nenhum livro encontrado.</p>';
             }
         });
