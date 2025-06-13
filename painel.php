@@ -100,8 +100,8 @@ $nomeProfessor = $_SESSION['nome'];
         <h2>Bem-vindo, <?php echo htmlspecialchars($nomeProfessor); ?>!</h2>
 
         <a class="link-box" href="cadastros.php">Cadastros</a>
-        <a class="link-box" href="emprestimo.php">Registrar Empréstimo</a>
-        <a class="link-box" href="informacoes.php">Informações Gerais</a>
+        <a class="link-box" href="registrar_emprestimo.php">Registrar Empréstimo</a>
+        <a class="link-box" href="informacoes_gerais.php">Informações Gerais</a>
 
         <a class="logout" href="logout.php">Sair</a>
     </div>
