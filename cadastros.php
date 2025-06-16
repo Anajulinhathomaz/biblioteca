@@ -6,47 +6,52 @@
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: url('./imagens/enrolados_cadastros2.jpg') no-repeat center center fixed;
-      background-size: cover;
       margin: 0;
       padding: 40px 20px;
       text-align: center;
       color: #fff;
+      background: url('./imagens/enrolados_cadastro.jpg') no-repeat center center fixed;
+      background-size: contain;
+      background-color: #000; /* evita bordas brancas */
     }
 
     h1 {
-      color: #FFD700; /* dourado, para destacar no fundo */
+      color: #FFD700; /* dourado */
       font-weight: 700;
       margin-bottom: 40px;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+      text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
     }
 
     .link-box {
-      background: rgba(255, 255, 255, 0.8);
+      background: rgba(102, 51, 153, 0.3); /* roxo/lilás translúcido */
       margin: 20px auto;
       padding: 20px 0;
-      width: 300px;
-      border-radius: 12px;
-      box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-      font-weight: 600;
-      font-size: 18px;
-      backdrop-filter: blur(4px);
+      width: 320px;
+      border-radius: 15px;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(6px);
       transition: transform 0.3s ease, background-color 0.3s ease;
     }
 
     .link-box a {
       text-decoration: none;
-      color: #6A0DAD; /* roxo vibrante */
+      color: #fffbe6;
+      font-weight: 700;
+      font-size: 20px;
       display: block;
+      padding: 12px 0;
+      border-radius: 8px;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     .link-box:hover {
-      background-color: rgba(255, 215, 0, 0.9); /* amarelo dourado ao passar o mouse */
-      transform: translateY(-5px);
+      background-color: rgba(102, 51, 153, 0.5); /* mais escuro ao passar o mouse */
+      transform: scale(1.05);
     }
 
     .link-box:hover a {
-      color: #fff;
+      background-color: #228B22; /* verde vibrante */
+      color: #FFD700; /* dourado */
     }
   </style>
 </head>
