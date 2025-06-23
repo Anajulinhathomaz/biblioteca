@@ -11,7 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cadastrar"])) {
     if (!empty($nome) && !empty($cpf) && !empty($email) && !empty($senha)) {
         // Verificar se o CPF já está cadastrado
         $sql = "SELECT id FROM professores WHERE cpf = ?";
-        $stmt = $conn->prepare($sql);
+        $stmt = $pdo->prepare($sql);
         $stmt->execute([$cpf]);
 
         if ($stmt->rowCount() == 0) {
