@@ -8,7 +8,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["entrar"])) {
 
     if (!empty($cpf) && !empty($senha)) {
         $sql = "SELECT * FROM professores WHERE cpf = ?";
-        $stmt = $conn->prepare($sql);
+        $stmt = $pdo->prepare($sql);
         $stmt->execute([$cpf]);
 
         if ($stmt->rowCount() > 0) {
