@@ -1,14 +1,27 @@
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Content-Type: application/json');
-    include 'conexao.php'; // Inclua seu arquivo de conexão PDO
+
+    // Conexão PDO com banco MySQL
+    $host = 'localhost';
+    $dbname = 'biblioteca';
+    $user = 'root';
+    $pass = '';
+
+    try {
+        $conn = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $pass);
+        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    } catch (PDOException $e) {
+        echo json_encode(['message' => 'Erro na conexão: ' . $e->getMessage(), 'status' => 'erro']);
+        exit;
+    }
 
     $titulo = $_POST['titulo'] ?? '';
     $autor = $_POST['autor'] ?? '';
     $isbn = $_POST['isbn'] ?? '';
 
     if (empty($titulo) || empty($autor)) {
-        echo json_encode(['message' => 'Título e autor são obrigatórios!']);
+        echo json_encode(['message' => 'Título e autor são obrigatórios!', 'status' => 'erro']);
         exit;
     }
 
@@ -17,9 +30,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $conn->prepare($sql);
         $stmt->execute([$titulo, $autor, $isbn]);
 
-        echo json_encode(['message' => 'Livro cadastrado com sucesso!']);
+        echo json_encode(['message' => 'Livro cadastrado com sucesso!', 'status' => 'sucesso']);
     } catch (PDOException $e) {
-        echo json_encode(['message' => 'Erro ao cadastrar: ' . $e->getMessage()]);
+        echo json_encode(['message' => 'Erro ao cadastrar: ' . $e->getMessage(), 'status' => 'erro']);
     }
     exit;
 }
@@ -41,13 +54,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         body {
             background: url('./imagens/enrolados_biblioteca5.png') no-repeat center center fixed;
             background-size: cover;
-            /* min-height: 100vh;
-            padding: 20px;
-            backdrop-filter: blur(3px); */
         }
 
         .container {
-            background: rgba(255, 248, 220, 0.9); /* cor clara com transparência */
+            background: rgba(255, 248, 220, 0.9);
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
@@ -131,6 +141,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: #3a2a1a;
             transform: scale(1.05);
         }
+
+        /* Mensagem central */
+        .mensagem {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px 30px;
+            border-radius: 12px;
+            background: rgba(255, 248, 220, 0.95);
+            color: #4b2e15;
+            font-weight: bold;
+            font-size: 18px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 10000;
+            display: none;
+            max-width: 80%;
+            text-align: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .mensagem.sucesso {
+            border: 2px solid #4b2e15;
+        }
+
+        .mensagem.erro {
+            border: 2px solid #b22222;
+            color: #b22222;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -60%); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
+        }
     </style>
 </head>
 <body>
@@ -141,10 +185,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 
 <div id="resultados"></div>
+<div id="mensagem" class="mensagem"></div>
 
 <script>
 const input = document.getElementById('busca');
 const resultados = document.getElementById('resultados');
+const mensagem = document.getElementById('mensagem');
 
 input.addEventListener('keyup', function() {
     const termo = input.value.trim();
@@ -199,8 +245,18 @@ function cadastrarLivro(titulo, autor, isbn) {
     fetch('', { method: 'POST', body: formData })
         .then(res => res.json())
         .then(response => {
-            alert(response.message);
+            exibirMensagem(response.message, response.status);
         });
+}
+
+function exibirMensagem(msg, tipo) {
+    mensagem.textContent = msg;
+    mensagem.className = 'mensagem ' + tipo;
+    mensagem.style.display = 'block';
+
+    setTimeout(() => {
+        mensagem.style.display = 'none';
+    }, 3000);
 }
 </script>
 

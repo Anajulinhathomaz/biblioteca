@@ -1,32 +1,28 @@
-<?php 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "biblioteca";
+<?php
+// Inclui o arquivo de conexão com PDO
+include "./conexao.php"; // $conn deve ser uma instância de PDO
 
-// Criar conexão
-$conn = new mysqli($servername, $username, $password, $dbname);
+// Função para listar professores usando PDO
+function listarProfessores($pdo) {
+    $stmt = $pdo->prepare("SELECT * FROM professores");
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Verificar conexão
-if ($conn->connect_error) {
-    die("Conexão falhou: " . $conn->connect_error);
+    
 }
 
-// Função para listar professores
-function listarProfessores($conn) {
-    $sql = "SELECT * FROM professores";
-    return $conn->query($sql);
-}
-
-// Deletar professor
+// Deletar professor com segurança usando prepared statement
 if (isset($_GET['deletar'])) {
     $id = intval($_GET['deletar']);
-    $conn->query("DELETE FROM professores WHERE id=$id");
+    $stmt = $conn->prepare("DELETE FROM professores WHERE id = ?");
+    $stmt->execute([$id]);
     header("Location: " . strtok($_SERVER["REQUEST_URI"], '?'));
     exit;
 }
 
-$professores = listarProfessores($conn);
+// Buscar professores
+$professores = listarProfessores($pdo);
+//var_dump($professores);
 ?>
 
 <!DOCTYPE html>
@@ -36,7 +32,7 @@ $professores = listarProfessores($conn);
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Lista de Professores</title>
     <style>
-        body {
+        /* body {
             font-family: Arial, sans-serif;
             background-color: #E5CCFF;
             margin: 0;
@@ -82,7 +78,7 @@ $professores = listarProfessores($conn);
         }
         a.deletar:hover {
             text-decoration: underline;
-        }
+        } */
     </style>
 </head>
 <body>
@@ -99,8 +95,8 @@ $professores = listarProfessores($conn);
                 </tr>
             </thead>
             <tbody>
-                <?php if ($professores->num_rows > 0): ?>
-                    <?php while($row = $professores->fetch_assoc()): ?>
+                <?php if (!empty($professores)): ?>
+                    <?php foreach ($professores as $row): ?>
                         <tr>
                             <td><?= htmlspecialchars($row['id']) ?></td>
                             <td><?= htmlspecialchars($row['nome']) ?></td>
@@ -110,7 +106,7 @@ $professores = listarProfessores($conn);
                                 <a class="deletar" href="?deletar=<?= $row['id'] ?>" onclick="return confirm('Tem certeza que deseja deletar este professor?');">Deletar</a>
                             </td>
                         </tr>
-                    <?php endwhile; ?>
+                    <?php endforeach; ?>
                 <?php else: ?>
                     <tr>
                         <td colspan="5">Nenhum professor encontrado.</td>
@@ -119,7 +115,5 @@ $professores = listarProfessores($conn);
             </tbody>
         </table>
     </div>
-
-    <?php $conn->close(); ?>
 </body>
 </html>

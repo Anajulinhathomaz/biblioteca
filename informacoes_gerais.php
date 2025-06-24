@@ -93,12 +93,12 @@
     <div class="cadastro-link">
       <a href="ver_emprestimo.php">Lista de Empréstimos</a>
     </div>
-  </div>
+  
 
   <div class="cadastro-link">
       <a href="graficos_biblioteca.php">Lista de Gráficos</a>
     </div>
   </div>
-
+</div>
 </body>
 </html>

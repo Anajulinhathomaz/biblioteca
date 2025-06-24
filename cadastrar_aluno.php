@@ -1,35 +1,46 @@
 <?php
-include "conexao.php";
 session_start();
 
+// Verifica se o professor está logado
 if (!isset($_SESSION['professor_id'])) {
     header("Location: login.php");
     exit();
 }
 
-$professor_id = $_SESSION['professor_id'];
+// Conexão PDO direta
+$host = 'localhost';
+$dbname = 'biblioteca';
+$user = 'root';
+$pass = '';
 
-if (isset($_POST["cadastrar_aluno"])) {
-    $nome = $_POST["nome"];
-    $email = $_POST["email"];
-    $serie = $_POST["serie"];
-
-    $sql = "INSERT INTO alunos (nome, email, serie) VALUES (?, ?, ?)";
-    $stmt = $conn->prepare($sql);
-    
-    if ($stmt->execute([$nome, $email, $serie])) {
-        echo "<script>alert('Aluno cadastrado com sucesso!');</script>";
-        header("Location: painel.php");
-        exit();
-    } else {
-        echo "<script>alert('Erro ao cadastrar aluno!');</script>";
-    }
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $pass);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    $mensagem = "Erro na conexão: " . $e->getMessage();
 }
 
-$sql_alunos = "SELECT * FROM alunos";
-$result_alunos = $conn->query($sql_alunos);
-?>
+$mensagem = "";
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["cadastrar_aluno"])) {
+    $nome = $_POST["nome"] ?? '';
+    $email = $_POST["email"] ?? '';
+    $serie = $_POST["serie"] ?? '';
+
+    if (empty($nome) || empty($email) || empty($serie)) {
+        $mensagem = "Preencha todos os campos!";
+    } else {
+        $sql = "INSERT INTO alunos (nome, email, serie) VALUES (?, ?, ?)";
+        $stmt = $pdo->prepare($sql);
+
+        if ($stmt->execute([$nome, $email, $serie])) {
+            $mensagem = "Aluno cadastrado com sucesso!";
+        } else {
+            $mensagem = "Erro ao cadastrar aluno!";
+        }
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -48,6 +59,29 @@ $result_alunos = $conn->query($sql_alunos);
             justify-content: center;
             align-items: center;
             overflow: hidden;
+            position: relative;
+        }
+
+        .mensagem {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(240, 248, 255, 0.95);
+            color: #4b2e15;
+            padding: 20px 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            font-weight: bold;
+            text-align: center;
+            z-index: 1000;
+            animation: fadeOut 4s ease forwards;
+        }
+
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { opacity: 0; display: none; }
         }
 
         .container {
@@ -123,22 +157,25 @@ $result_alunos = $conn->query($sql_alunos);
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Cadastrar Aluno</h2>
-        <form method="POST" action="">
-            <label for="nome">Nome:</label>
-            <input type="text" id="nome" name="nome" required />
 
-            <label for="serie">Série:</label>
-            <input type="text" id="serie" name="serie" required />
+<?php if (!empty($mensagem)): ?>
+    <div class="mensagem"><?= htmlspecialchars($mensagem) ?></div>
+<?php endif; ?>
 
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required />
+<div class="container">
+    <h2>Cadastrar Aluno</h2>
+    <form method="POST" action="">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" required />
 
-            <button type="submit" name="cadastrar_aluno">Cadastrar Aluno</button>
-        </form>
-    </div>
+        <label for="serie">Série:</label>
+        <input type="text" id="serie" name="serie" required />
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required />
+
+        <button type="submit" name="cadastrar_aluno">Cadastrar Aluno</button>
+    </form>
+</div>
 </body>
 </html>
-
-<?php $conn = null; ?>

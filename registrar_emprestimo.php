@@ -14,7 +14,7 @@ if (isset($_POST["registrar_emprestimo"])) {
             echo "<script>alert('Erro: A data de devolução não pode ser anterior à data de empréstimo.');</script>";
         } else {
             $sql = "INSERT INTO emprestimos (aluno_id, livro_id, professor_id, data_emprestimo, data_devolucao) VALUES (?, ?, ?, ?, ?)";
-            $stmt = $conn->prepare($sql);
+            $stmt = $pdo->prepare($sql);
             
             if ($stmt->execute([$aluno_id, $livro_id, $professor_id, $data_emprestimo, $data_devolucao])) {
                 echo "<script>alert('Empréstimo registrado com sucesso!');</script>";
@@ -30,13 +30,13 @@ if (isset($_POST["registrar_emprestimo"])) {
 }
 
 $sql_alunos = "SELECT * FROM alunos";
-$result_alunos = $conn->query($sql_alunos);
+$result_alunos = $pdo->query($sql_alunos);
 
 $sql_livros = "SELECT * FROM livros";
-$result_livros = $conn->query($sql_livros);
+$result_livros = $pdo->query($sql_livros);
 
 $sql_professores = "SELECT * FROM professores";
-$result_professores = $conn->query($sql_professores);
+$result_professores = $pdo->query($sql_professores);
 ?>
 
 <!DOCTYPE html>
