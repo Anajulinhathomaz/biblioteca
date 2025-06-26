@@ -1,21 +1,18 @@
 <?php
-session_start(); // Inicia a sessão
+session_start();
 
-// Verifica se o usuário está logado
+// Se o usuário estiver logado
 if (isset($_SESSION['usuario_id'])) {
-    // Destrói a sessão
-    session_unset(); // Remove todas as variáveis de sessão
-    session_destroy(); // Destroi a sessão
+    // Encerra a sessão
+    session_unset();
+    session_destroy();
 
-    // Mensagem de logout bem-sucedido
-    $_SESSION['mensagem'] = "Você saiu com sucesso!";
-
-    // Redireciona para a página inicial ou página de login
-    header("Location: login.php"); // Altere para a página desejada
+    // Redireciona com parâmetro de confirmação
+    header("Location: login.php?logout=ok");
     exit();
 } else {
-    // Se não estiver logado, redireciona para a página de login
-    header("Location: login.php"); // Altere para a página desejada
+    // Se não estiver logado, redireciona direto
+    header("Location: login.php");
     exit();
 }
 ?>

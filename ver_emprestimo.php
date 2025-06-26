@@ -30,93 +30,120 @@ try {
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Empréstimos</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #E5CCFF;
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lista de Empréstimos</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        .container {
-            width: 90%;
-            max-width: 1000px;
-            background-color: #fff;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            border-radius: 8px;
-        }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url('https://wallpaper.forfun.com/fetch/35/35701c7bca9f48660192464f82f3468c.jpeg') no-repeat center center fixed;
+      background-size: cover;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+      color: #f9f9f9;
+    }
 
-        h2 {
-            text-align: center;
-            color: #333;
-            margin-top: 0;
-        }
+    .container {
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(6px);
+      border-radius: 15px;
+      padding: 30px;
+      width: 100%;
+      max-width: 1000px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
+    h2 {
+      text-align: center;
+      color: #ffeaff;
+      font-size: 28px;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+    }
 
-        th, td {
-            padding: 12px;
-            border: 1px solid #ccc;
-            text-align: left;
-        }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
 
-        th {
-            background-color: #4CAF50;
-            color: white;
-        }
+    th, td {
+      padding: 12px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
 
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
+    th {
+      background-color: rgba(171, 70, 209, 0.9);
+      color: #fff;
+      font-weight: 600;
+      border-bottom: 1px solid rgba(255,255,255,0.3);
+    }
 
-        p {
-            color: #f44336;
-            text-align: center;
-            font-size: 18px;
-        }
-    </style>
+    tr:nth-child(even) {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    p {
+      color: #ffd1e6;
+      text-align: center;
+      font-size: 18px;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 600px) {
+      table {
+        font-size: 14px;
+      }
+
+      th, td {
+        padding: 10px;
+      }
+
+      h2 {
+        font-size: 22px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Lista de Empréstimos</h2>
-        <?php if (isset($erro)): ?>
-            <p><?php echo $erro; ?></p>
-        <?php elseif (!empty($emprestimos)): ?>
-            <table>
-                <tr>
-                    <th>ID</th>
-                    <th>Aluno</th>
-                    <th>Professor</th>
-                    <th>Livro</th>
-                    <th>Data de Empréstimo</th>
-                    <th>Data de Devolução</th>
-                </tr>
-                <?php foreach ($emprestimos as $emprestimo): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($emprestimo['id']) ?></td>
-                        <td><?= htmlspecialchars($emprestimo['al']) ?></td>
-                        <td><?= htmlspecialchars($emprestimo['nome']) ?></td>
-                        <td><?= htmlspecialchars($emprestimo['titulo']) ?></td>
-                        <td><?= htmlspecialchars($emprestimo['data_emprestimo']) ?></td>
-                        <td><?= htmlspecialchars($emprestimo['data_devolucao']) ?></td>
-                    </tr>
-                <?php endforeach; ?>
-            </table>
-        <?php else: ?>
-            <p>Nenhum empréstimo encontrado.</p>
-        <?php endif; ?>
-    </div>
+  <div class="container">
+    <h2>Lista de Empréstimos</h2>
+    <?php if (isset($erro)): ?>
+      <p><?= htmlspecialchars($erro) ?></p>
+    <?php elseif (!empty($emprestimos)): ?>
+      <table>
+        <tr>
+          <th>ID</th>
+          <th>Aluno</th>
+          <th>Professor</th>
+          <th>Livro</th>
+          <th>Data de Empréstimo</th>
+          <th>Data de Devolução</th>
+        </tr>
+        <?php foreach ($emprestimos as $emprestimo): ?>
+          <tr>
+            <td><?= htmlspecialchars($emprestimo['id']) ?></td>
+            <td><?= htmlspecialchars($emprestimo['al']) ?></td>
+            <td><?= htmlspecialchars($emprestimo['nome']) ?></td>
+            <td><?= htmlspecialchars($emprestimo['titulo']) ?></td>
+            <td><?= htmlspecialchars($emprestimo['data_emprestimo']) ?></td>
+            <td><?= htmlspecialchars($emprestimo['data_devolucao']) ?></td>
+          </tr>
+        <?php endforeach; ?>
+      </table>
+    <?php else: ?>
+      <p>Nenhum empréstimo encontrado.</p>
+    <?php endif; ?>
+  </div>
 </body>
 </html>

@@ -1,156 +1,194 @@
-<?php 
-$servername = "localhost";
-$username = "root"; 
-$password = ""; 
-$dbname = "biblioteca"; 
+<?php
+// Conexão PDO
+$host = 'localhost';
+$dbname = 'biblioteca';
+$username = 'root';
+$password = '';
 
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("Conexão falhou: " . $conn->connect_error);
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch(PDOException $e) {
+    die("Erro de conexão: " . $e->getMessage());
 }
 
-function listarAlunos($conn) {
-    $sql = "SELECT * FROM alunos";
-    $result = $conn->query($sql);
-    return $result;
+// Função para listar alunos
+function listarAlunos($pdo) {
+    $stmt = $pdo->query("SELECT * FROM alunos");
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+// Deletar aluno + empréstimos vinculados
 if (isset($_GET['deletar'])) {
     $id = intval($_GET['deletar']);
-    $sql = "DELETE FROM alunos WHERE id=$id";
-    $conn->query($sql);
-    header("Location: " . strtok($_SERVER["REQUEST_URI"],'?'));
-    exit;
+
+    try {
+        // Iniciar transação para garantir atomicidade
+        $pdo->beginTransaction();
+
+        // Deletar empréstimos relacionados ao aluno
+        $stmt = $pdo->prepare("DELETE FROM emprestimos WHERE aluno_id = ?");
+        $stmt->execute([$id]);
+
+        // Deletar o aluno
+        $stmt = $pdo->prepare("DELETE FROM alunos WHERE id = ?");
+        $stmt->execute([$id]);
+
+        // Confirmar transação
+        $pdo->commit();
+
+        // Redirecionar para a mesma página sem parâmetros GET
+        header("Location: " . strtok($_SERVER["REQUEST_URI"], '?'));
+        exit;
+
+    } catch (PDOException $e) {
+        $pdo->rollBack();
+        die("Erro ao deletar: " . $e->getMessage());
+    }
 }
 
-$alunos = listarAlunos($conn);
+$alunos = listarAlunos($pdo);
 ?>
 
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Lista de Alunos</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <title>Lista de Alunos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    /* Seu CSS existente */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        body {
-            background-image: url('https://c4.wallpaperflare.com/wallpaper/156/861/196/movies-tangled-disney-rapunzel-wallpaper-preview.jpg');
-            background-size: cover;
-            background-position: center;
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            color: #fff;
-        }
+    body {
+      background: url('https://wallpaper.forfun.com/fetch/35/35701c7bca9f48660192464f82f3468c.jpeg') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 30px 20px;
+      color: #F8F1FF;
+    }
 
-        .container {
-            background: rgba(0, 0, 0, 0.6);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            width: 90%;
-            max-width: 900px;
-            backdrop-filter: blur(5px);
-        }
+    .container {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      backdrop-filter: blur(6px);
+      width: 100%;
+      max-width: 900px;
+      overflow-x: auto;
+    }
 
-        h1 {
-            text-align: center;
-            color: #f0e6ff;
-            margin-bottom: 20px;
-            font-size: 26px;
-        }
+    h1 {
+      text-align: center;
+      color: #F8F1FF;
+      margin-bottom: 25px;
+      font-size: 2rem;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            backdrop-filter: blur(2px);
-        }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: rgba(255, 255, 255, 0.05);
+      color: #fff;
+    }
 
-        table th, table td {
-            padding: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            text-align: center;
-            color: #fff;
-        }
+    th, td {
+      padding: 12px 14px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
 
-        table th {
-            background: linear-gradient(45deg, #a76cfd, #ff89e9);
-            font-weight: bold;
-        }
+    th {
+      background-color: rgba(171, 70, 209, 0.9);
+      font-weight: bold;
+    }
 
-        table tr:nth-child(even) {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
+    tr:nth-child(even) {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
 
-        a.deletar {
-            display: inline-block;
-            padding: 8px 12px;
-            background: linear-gradient(45deg, #e57373, #ff6f61);
-            color: #fff;
-            border-radius: 5px;
-            font-weight: bold;
-            text-decoration: none;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
+    a.deletar {
+      color: #e74c3c;
+      font-weight: bold;
+      text-decoration: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+      background-color: rgba(255, 255, 255, 0.1);
+      display: inline-block;
+    }
 
-        a.deletar:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-        }
+    a.deletar:hover {
+      background-color: #e74c3c;
+      color: #fff;
+    }
 
-        .sem-aluno {
-            text-align: center;
-            padding: 20px;
-            background: rgba(0,0,0,0.3);
-            border-radius: 10px;
-            margin-top: 20px;
-            font-size: 16px;
-            color: #f5f5f5;
-        }
-    </style>
+    .sem-aluno {
+      text-align: center;
+      padding: 20px;
+      margin-top: 20px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 10px;
+      font-size: 16px;
+      color: #eee;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px;
+      }
+
+      table {
+        font-size: 14px;
+      }
+
+      th, td {
+        padding: 10px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Lista de Alunos</h1>
-        <?php if ($alunos->num_rows > 0): ?>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nome</th>
-                        <th>Série</th>
-                        <th>Email</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php while($row = $alunos->fetch_assoc()): ?>
-                        <tr>
-                            <td><?= htmlspecialchars($row['id']) ?></td>
-                            <td><?= htmlspecialchars($row['nome']) ?></td>
-                            <td><?= htmlspecialchars($row['serie']) ?></td>
-                            <td><?= htmlspecialchars($row['email']) ?></td>
-                            <td>
-                                <a class="deletar" href="?deletar=<?= $row['id'] ?>" onclick="return confirm('Tem certeza que deseja deletar este aluno?');">Deletar</a>
-                            </td>
-                        </tr>
-                    <?php endwhile; ?>
-                </tbody>
-            </table>
-        <?php else: ?>
-            <div class="sem-aluno">Nenhum aluno encontrado.</div>
-        <?php endif; ?>
-    </div>
-
-    <?php $conn->close(); ?>
+  <div class="container">
+    <h1>Lista de Alunos</h1>
+    <?php if (count($alunos) > 0): ?>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Série</th>
+            <th>Email</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach($alunos as $row): ?>
+            <tr>
+              <td><?= htmlspecialchars($row['id']) ?></td>
+              <td><?= htmlspecialchars($row['nome']) ?></td>
+              <td><?= htmlspecialchars($row['serie']) ?></td>
+              <td><?= htmlspecialchars($row['email']) ?></td>
+              <td>
+                <a class="deletar" href="?deletar=<?= $row['id'] ?>" onclick="return confirm('Tem certeza que deseja deletar este aluno?');">Deletar</a>
+              </td>
+            </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
+    <?php else: ?>
+      <div class="sem-aluno">Nenhum aluno encontrado.</div>
+    <?php endif; ?>
+  </div>
 </body>
 </html>

@@ -41,76 +41,100 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Busca e Cadastro de Livros</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Georgia', serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background: url('./imagens/enrolados_biblioteca5.png') no-repeat center center fixed;
-            background-size: cover;
-        }
+    background: url('./imagens/enrolados_biblioteca5.png') no-repeat center center fixed;
+    background-size: cover;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    color: #eee;
+}
 
-        .container {
-            background: rgba(255, 248, 220, 0.9);
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            width: 400px;
-            max-width: 90%;
-            text-align: center;
-            margin: 20px auto 30px;
-        }
-
+.container {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    border-radius: 16px;
+    padding: 30px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+    text-align: center;
+    color: #f0e6ff;
+    margin-bottom: 30px;
+}
         h1 {
-            margin-bottom: 20px;
-            font-size: 24px;
-            color: #4b2e15;
+            margin-bottom: 25px;
+            font-size: 26px;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
         }
 
         input[type="text"] {
             width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #bfa17b;
-            border-radius: 5px;
-            background-color: #fffbe6;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: rgba(255,255,255,0.1);
+            color: #eee;
+            box-shadow: inset 0 0 5px rgba(255,255,255,0.2);
+            transition: background-color 0.3s ease;
+        }
+        input[type="text"]::placeholder {
+            color: #ccc;
+        }
+        input[type="text"]:focus {
+            background-color: rgba(255,255,255,0.25);
+            outline: none;
+            box-shadow: 0 0 8px rgba(171, 70, 209, 0.9);
         }
 
         #resultados {
-            width: 1500px;
-            max-width: 100%;
+            width: 100%;
             max-height: 600px;
             overflow-y: auto;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 14px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.5);
             padding: 20px;
-            background: rgba(255, 248, 220, 0.9);
-            border-radius: 10px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            margin: 0 auto;
             display: none;
+            color: #f0e6ff;
         }
 
         .livro {
             display: flex;
             align-items: flex-start;
-            margin-bottom: 20px;
-            padding: 20px;
-            border-radius: 8px;
-            background: #fffdf7;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             gap: 20px;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(25, 0, 35, 0.6);
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(171, 70, 209, 0.6);
+            transition: background 0.3s ease;
+        }
+        .livro:hover {
+            background: rgba(171, 70, 209, 0.25);
+            box-shadow: 0 0 20px rgba(171, 70, 209, 0.9);
         }
 
         .livro img {
-            width: 180px;
+            width: 120px;
             height: auto;
-            border-radius: 5px;
+            border-radius: 8px;
             flex-shrink: 0;
+            box-shadow: 0 0 12px rgba(171, 70, 209, 0.8);
         }
 
         .livro div {
@@ -118,28 +142,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             flex: 1;
         }
 
+        .livro h3 {
+            margin-bottom: 8px;
+            color: #ddaaff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+        }
+
         .descricao {
             margin-top: 10px;
             font-size: 0.95em;
-            color: #5c4328;
+            color: #d3c4e3;
+            line-height: 1.3;
+            max-height: 80px;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         button {
-            padding: 10px 20px;
-            background: #6b4226;
-            color: #fff8dc;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
             margin-top: 10px;
-            font-weight: bold;
-            transition: background 0.3s ease, transform 0.2s ease;
+            padding: 10px 25px;
+            background: rgba(171, 70, 209, 0.9);
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1em;
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(171, 70, 209, 0.7);
+            transition: background 0.3s ease, transform 0.15s ease;
         }
-
         button:hover {
-            background: #c1975f;
-            color: #3a2a1a;
+            background: rgba(171, 70, 209, 1);
             transform: scale(1.05);
+            box-shadow: 0 0 18px rgba(171, 70, 209, 1);
+            color: #fff;
         }
 
         /* Mensagem central */
@@ -149,12 +185,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             left: 50%;
             transform: translate(-50%, -50%);
             padding: 20px 30px;
-            border-radius: 12px;
-            background: rgba(255, 248, 220, 0.95);
-            color: #4b2e15;
+            border-radius: 14px;
+            background: rgba(171, 70, 209, 0.9);
+            color: #fff;
             font-weight: bold;
             font-size: 18px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 30px rgba(171, 70, 209, 0.7);
             z-index: 10000;
             display: none;
             max-width: 80%;
@@ -163,12 +199,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .mensagem.sucesso {
-            border: 2px solid #4b2e15;
+            border: 2px solid #b3a0ff;
         }
 
         .mensagem.erro {
-            border: 2px solid #b22222;
-            color: #b22222;
+            border: 2px solid #ff4c4c;
+            background: rgba(255, 76, 76, 0.9);
+            color: #fff;
         }
 
         @keyframes fadeIn {
@@ -181,7 +218,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <div class="container">
     <h1>Buscar e Cadastrar Livro</h1>
-    <input type="text" id="busca" placeholder="Digite o nome do livro">
+    <input type="text" id="busca" placeholder="Digite o nome do livro" autocomplete="off" />
 </div>
 
 <div id="resultados"></div>
@@ -218,7 +255,7 @@ input.addEventListener('keyup', function() {
                     const div = document.createElement('div');
                     div.className = 'livro';
                     div.innerHTML = `
-                        <img src="${imagem}" alt="Capa">
+                        <img src="${imagem}" alt="Capa do livro">
                         <div>
                             <h3>${titulo}</h3>
                             <p><strong>Autor(es):</strong> ${autores}</p>

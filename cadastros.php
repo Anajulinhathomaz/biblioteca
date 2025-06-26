@@ -6,74 +6,82 @@
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 40px 20px;
-      text-align: center;
-      color: #fff;
-      background: url('https://wallpapers.com/images/hd/tangled-1876-x-1080-background-lnu3xk3im6nl463z.jpg') no-repeat center center fixed;
+      background: url('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjS8l6-NhHf5adBiLhey16nlOHzk-OPO8ek5RVT43-DDkAI2qcCRNEuM5GwqMBdtxaXAAIDRuBmxEFRpuuU_bbAMlGJ9i7wRHcjKMtg0elJKkQQsjcEyAQvBlw3eT-mGHkNkQkm0HwiB6Ut/s1600/1292856811_50_123rgb.jpg') no-repeat center center fixed;
       background-size: cover;
-      background-color: #000;
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #F8F1FF;
+    }
+
+    .container {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      width: 320px;
+      backdrop-filter: blur(5px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     h1 {
-      color: #ffeabf;
+      margin-bottom: 30px;
+      color: #F8F1FF;
       font-weight: 700;
-      margin-bottom: 40px;
-      text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.85);
-      font-size: 3rem;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+      text-align: center;
     }
 
     .link-box {
-      background: rgba(255, 240, 250, 0.2);
-      margin: 20px auto;
-      padding: 20px 0;
-      width: 320px;
-      border-radius: 25px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-      backdrop-filter: blur(8px);
-      transition: transform 0.3s ease, background-color 0.3s ease;
-      border: 2px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .link-box a {
-      text-decoration: none;
-      color: #fffbe6;
-      font-weight: 700;
-      font-size: 20px;
       display: block;
-      padding: 14px 0;
-      border-radius: 25px;
-      background: linear-gradient(135deg, #f7c2ff, #c199ff);
-      box-shadow: 0 4px 12px rgba(185, 125, 255, 0.4);
-      transition: all 0.4s ease;
+      background: rgba(255, 255, 255, 0.85);
+      margin: 12px 0;
+      padding: 15px 0;
+      width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+      font-weight: 600;
+      font-size: 18px;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+      backdrop-filter: blur(5px);
+      text-align: center;
+      cursor: pointer;
+      color: #6C3483;
+      text-decoration: none;
     }
 
     .link-box:hover {
-      background-color: rgba(255, 255, 255, 0.25);
-      transform: scale(1.07);
-      border-color: rgba(255, 255, 255, 0.5);
+      background-color: rgba(171, 70, 209, 0.9);
+      transform: scale(1.05);
+      color: white;
     }
 
-    .link-box:hover a {
-      background: linear-gradient(135deg, #ffeabf, #ffc3a0);
-      color: #5c3b2e;
-      box-shadow: 0 6px 18px rgba(255, 194, 120, 0.8);
+    @media (max-width: 420px) {
+      .container {
+        width: 100%;
+        border-radius: 0;
+        box-shadow: none;
+        height: 100vh;
+        justify-content: center;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>Cadastros</h1>
 
-  <div class="link-box">
-    <a href="cadastrar_aluno.php">Cadastrar Aluno</a>
+  <div class="container">
+    <h1>Cadastros</h1>
+
+    <a class="link-box" href="cadastrar_aluno.php">Cadastrar Aluno</a>
+    <a class="link-box" href="novo_professor.php">Cadastrar Professor</a>
+    <a class="link-box" href="buscar_cadastrar_livro.php">Cadastrar e Buscar Livro</a>
   </div>
 
-  <div class="link-box">
-    <a href="novo_professor.php">Cadastrar Professor</a>
-  </div>
-
-  <div class="link-box">
-    <a href="buscar_cadastrar_livro.php">Cadastrar e Buscar Livro</a>
-  </div>
 </body>
 </html>
