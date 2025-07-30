@@ -2,33 +2,34 @@
 include "conexao.php";
 
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+  $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
+  $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    $sql = "SELECT 
+  $sql = "SELECT 
         e.id AS id, 
         a.nome AS al, 
         p.nome AS nome, 
         l.titulo AS titulo,
         MIN(e.data_emprestimo) AS data_emprestimo, 
-        MAX(e.data_devolucao) AS data_devolucao
+        MAX(e.data_devolucao) AS data_devolucao,
+        e.status
         FROM emprestimos e
         INNER JOIN alunos a ON e.aluno_id = a.id
         INNER JOIN professores p ON e.professor_id = p.id
         INNER JOIN livros l ON e.livro_id = l.id
         GROUP BY e.id, a.nome, p.nome, l.titulo;";
-    
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute();
-    $emprestimos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+  $stmt = $pdo->prepare($sql);
+  $stmt->execute();
+  $emprestimos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-    $erro = "Erro na conexão: " . $e->getMessage();
+  $erro = "Erro na conexão: " . $e->getMessage();
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -67,7 +68,7 @@ try {
       color: #ffeaff;
       font-size: 28px;
       margin-bottom: 20px;
-      text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
     }
 
     table {
@@ -76,7 +77,8 @@ try {
       margin-top: 20px;
     }
 
-    th, td {
+    th,
+    td {
       padding: 12px;
       text-align: center;
       border: 1px solid rgba(255, 255, 255, 0.15);
@@ -86,7 +88,7 @@ try {
       background-color: rgba(171, 70, 209, 0.9);
       color: #fff;
       font-weight: 600;
-      border-bottom: 1px solid rgba(255,255,255,0.3);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.3);
     }
 
     tr:nth-child(even) {
@@ -105,7 +107,8 @@ try {
         font-size: 14px;
       }
 
-      th, td {
+      th,
+      td {
         padding: 10px;
       }
 
@@ -115,6 +118,7 @@ try {
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <h2>Lista de Empréstimos</h2>
@@ -123,21 +127,34 @@ try {
     <?php elseif (!empty($emprestimos)): ?>
       <table>
         <tr>
-          <th>ID</th>
           <th>Aluno</th>
           <th>Professor</th>
           <th>Livro</th>
           <th>Data de Empréstimo</th>
           <th>Data de Devolução</th>
+          <th>Status</th>
         </tr>
         <?php foreach ($emprestimos as $emprestimo): ?>
           <tr>
-            <td><?= htmlspecialchars($emprestimo['id']) ?></td>
             <td><?= htmlspecialchars($emprestimo['al']) ?></td>
             <td><?= htmlspecialchars($emprestimo['nome']) ?></td>
             <td><?= htmlspecialchars($emprestimo['titulo']) ?></td>
             <td><?= htmlspecialchars($emprestimo['data_emprestimo']) ?></td>
             <td><?= htmlspecialchars($emprestimo['data_devolucao']) ?></td>
+            <td>
+              <?php
+              if ($emprestimo['status'] == 0) {
+                echo 'Em andamento';
+              } elseif ($emprestimo['status'] == 1) {
+                echo 'Atrasado';
+              } elseif ($emprestimo['status'] == 2) {
+                echo 'Devolvido';
+              } else {
+                echo 'Desconhecido';
+              }
+              ?>
+            </td>
+            <td>
           </tr>
         <?php endforeach; ?>
       </table>

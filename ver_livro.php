@@ -135,7 +135,6 @@ $livros = listarLivros($conn);
       <table>
         <thead>
           <tr>
-            <th>ID</th>
             <th>Título</th>
             <th>Autor</th>
             <th>ISBN</th>
@@ -145,7 +144,6 @@ $livros = listarLivros($conn);
         <tbody>
           <?php while($row = $livros->fetch_assoc()): ?>
             <tr>
-              <td><?= htmlspecialchars($row['id']) ?></td>
               <td><?= htmlspecialchars($row['titulo']) ?></td>
               <td><?= htmlspecialchars($row['autor']) ?></td>
               <td><?= htmlspecialchars($row['isbn']) ?></td>

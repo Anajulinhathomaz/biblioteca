@@ -9,12 +9,19 @@ function listarProfessores($pdo) {
 }
 
 if (isset($_GET['deletar'])) {
-    $id = intval($_GET['deletar']);
-    $stmt = $conn->prepare("DELETE FROM professores WHERE id = ?");
-    $stmt->execute([$id]);
-    header("Location: " . strtok($_SERVER["REQUEST_URI"], '?'));
-    exit;
+  $id = intval($_GET['deletar']);
+  
+  try {
+      $stmt = $pdo->prepare("DELETE FROM professores WHERE id = ?");
+      $stmt->execute([$id]);
+
+      header("Location: " . strtok($_SERVER["REQUEST_URI"], '?'));
+      exit;
+  } catch (PDOException $e) {
+      echo "Este professor não pode ser deletado, pois há alunos associados a ele.";
+  }
 }
+
 
 $professores = listarProfessores($pdo);
 ?>
@@ -117,7 +124,6 @@ $professores = listarProfessores($pdo);
     <table>
       <thead>
         <tr>
-          <th>ID</th>
           <th>Nome</th>
           <th>CPF</th>
           <th>Email</th>
@@ -128,7 +134,6 @@ $professores = listarProfessores($pdo);
         <?php if (!empty($professores)): ?>
           <?php foreach ($professores as $row): ?>
             <tr>
-              <td><?= htmlspecialchars($row['id']) ?></td>
               <td><?= htmlspecialchars($row['nome']) ?></td>
               <td><?= htmlspecialchars($row['cpf']) ?></td>
               <td><?= htmlspecialchars($row['email']) ?></td>

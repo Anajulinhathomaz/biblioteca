@@ -165,7 +165,6 @@ $alunos = listarAlunos($pdo);
       <table>
         <thead>
           <tr>
-            <th>ID</th>
             <th>Nome</th>
             <th>Série</th>
             <th>Email</th>
@@ -175,7 +174,6 @@ $alunos = listarAlunos($pdo);
         <tbody>
           <?php foreach($alunos as $row): ?>
             <tr>
-              <td><?= htmlspecialchars($row['id']) ?></td>
               <td><?= htmlspecialchars($row['nome']) ?></td>
               <td><?= htmlspecialchars($row['serie']) ?></td>
               <td><?= htmlspecialchars($row['email']) ?></td>

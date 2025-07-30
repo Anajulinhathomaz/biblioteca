@@ -103,7 +103,7 @@ $nomeProfessor = $_SESSION['nome'];
         <a class="link-box" href="registrar_emprestimo.php">Registrar Empréstimo</a>
         <a class="link-box" href="informacoes_gerais.php">Informações Gerais</a>
 
-        <a class="logout" href="logout.php">Sair</a>
+        <a class="logout" href="index.php">Sair</a>
     </div>
 </body>
 </html>

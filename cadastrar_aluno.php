@@ -7,7 +7,7 @@ if (!isset($_SESSION['professor_id'])) {
     exit();
 }
 
-// Conexão PDO direta
+// Conexão PDO
 $host = 'localhost';
 $dbname = 'biblioteca';
 $user = 'root';
@@ -17,30 +17,39 @@ try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $pass);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
-    $mensagem = "Erro na conexão: " . $e->getMessage();
+    die("Erro na conexão: " . $e->getMessage());
 }
 
 $mensagem = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["cadastrar_aluno"])) {
-    $nome = $_POST["nome"] ?? '';
-    $email = $_POST["email"] ?? '';
-    $serie = $_POST["serie"] ?? '';
+    $nome = trim($_POST["nome"] ?? '');
+    $email = trim($_POST["email"] ?? '');
+    $serie = trim($_POST["serie"] ?? '');
 
     if (empty($nome) || empty($email) || empty($serie)) {
         $mensagem = "Preencha todos os campos!";
     } else {
-        $sql = "INSERT INTO alunos (nome, email, serie) VALUES (?, ?, ?)";
-        $stmt = $pdo->prepare($sql);
+        // Verifica se o e-mail já existe
+        $verifica = $pdo->prepare("SELECT id FROM alunos WHERE email = ?");
+        $verifica->execute([$email]);
 
-        if ($stmt->execute([$nome, $email, $serie])) {
-            $mensagem = "Aluno cadastrado com sucesso!";
+        if ($verifica->rowCount() > 0) {
+            $mensagem = "Este e-mail já está cadastrado!";
         } else {
-            $mensagem = "Erro ao cadastrar aluno!";
+            $sql = "INSERT INTO alunos (nome, email, serie) VALUES (?, ?, ?)";
+            $stmt = $pdo->prepare($sql);
+
+            if ($stmt->execute([$nome, $email, $serie])) {
+                $mensagem = "Aluno cadastrado com sucesso!";
+            } else {
+                $mensagem = "Erro ao cadastrar aluno!";
+            }
         }
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -59,47 +68,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["cadastrar_aluno"])) {
             justify-content: center;
             align-items: center;
             overflow: hidden;
-            position: relative;
         }
 
         .mensagem {
             position: fixed;
-            top: 50%;
+            top: 30px;
             left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(240, 248, 255, 0.95);
+            transform: translateX(-50%);
+            background: rgba(240, 248, 255, 0.97);
             color: #4b2e15;
-            padding: 20px 40px;
-            border-radius: 12px;
+            padding: 16px 30px;
+            border-radius: 10px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.3);
             font-weight: bold;
-            text-align: center;
             z-index: 1000;
-            animation: fadeOut 4s ease forwards;
+            animation: fadeOut 6s ease forwards;
         }
 
         @keyframes fadeOut {
-            0% { opacity: 1; }
-            80% { opacity: 1; }
+            0%, 80% { opacity: 1; }
             100% { opacity: 0; display: none; }
         }
 
         .container {
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(12px) saturate(150%);
-            padding: 40px 50px;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(12px);
+            padding: 40px;
             border-radius: 15px;
             width: 100%;
             max-width: 500px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
         }
 
         h2 {
             text-align: center;
             color: #E0CFFD;
             margin-bottom: 30px;
-            font-size: 28px;
+            font-size: 26px;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
         }
 
@@ -112,32 +117,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["cadastrar_aluno"])) {
             font-weight: bold;
             color: #F0E9FF;
             margin-bottom: 6px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
         }
 
         input[type="text"],
         input[type="email"] {
             width: 100%;
-            padding: 12px 15px;
+            padding: 12px;
             margin-bottom: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 8px;
             background: rgba(255, 255, 255, 0.1);
             color: #fff;
-            font-size: 16px;
-            backdrop-filter: blur(5px);
-            transition: border 0.3s ease, background 0.3s ease;
         }
 
-        input[type="text"]:focus,
-        input[type="email"]:focus {
+        input:focus {
             border: 1px solid #A29BFE;
             background: rgba(255, 255, 255, 0.15);
             outline: none;
         }
 
         button {
-            width: 100%;
             background: linear-gradient(135deg, #8e44ad, #6c5ce7, #2980b9);
             color: #fff;
             padding: 15px;
@@ -146,13 +145,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["cadastrar_aluno"])) {
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
             transition: background 0.4s ease, transform 0.2s ease;
         }
 
         button:hover {
             background: linear-gradient(135deg, #6c5ce7, #8e44ad, #3498db);
-            transform: scale(1.05);
+            transform: scale(1.04);
         }
     </style>
 </head>

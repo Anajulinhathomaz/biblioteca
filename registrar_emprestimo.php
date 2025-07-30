@@ -29,6 +29,8 @@ if (isset($_POST["registrar_emprestimo"])) {
     }
 }
 
+$status = 0;
+
 $sql_alunos = "SELECT * FROM alunos";
 $result_alunos = $pdo->query($sql_alunos);
 
