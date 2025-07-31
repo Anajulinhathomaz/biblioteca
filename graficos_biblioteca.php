@@ -87,18 +87,18 @@ while ($row = $stmt3->fetch(PDO::FETCH_ASSOC)) {
                 colors: ['#DB4437']
             });
 
-        // GRÁFICO 3 - Livros mais lidos no 1º Bimestre (exemplo)
+        // GRÁFICO 3 - Livros mais lidos no mes (exemplo)
         var data3 = google.visualization.arrayToDataTable([
             ['Livro', 'Empréstimos'],
             <?php
-            foreach ($dados_bimestre[1] ?? [] as $item) {
+            foreach ($dados_mes[1] ?? [] as $item) {
                 echo "['{$item[0]}', {$item[1]}],";
             }
             ?>
         ]);
         new google.visualization.PieChart(document.getElementById('grafico3'))
             .draw(data3, {
-                title: 'Livros mais lidos no 1º Bimestre',
+                title: 'Livros mais lidos no mes',
                 is3D: true
             });
     }

@@ -15,10 +15,9 @@ if (isset($_POST["registrar_emprestimo"])) {
         } else {
             $sql = "INSERT INTO emprestimos (aluno_id, livro_id, professor_id, data_emprestimo, data_devolucao) VALUES (?, ?, ?, ?, ?)";
             $stmt = $pdo->prepare($sql);
-            
+
             if ($stmt->execute([$aluno_id, $livro_id, $professor_id, $data_emprestimo, $data_devolucao])) {
                 echo "<script>alert('Empréstimo registrado com sucesso!');</script>";
-                header("Location: painel.php");
                 exit();
             } else {
                 echo "<script>alert('Erro ao registrar empréstimo!');</script>";
@@ -43,6 +42,7 @@ $result_professores = $pdo->query($sql_professores);
 
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <title>Registrar Empréstimo</title>
@@ -83,7 +83,9 @@ $result_professores = $pdo->query($sql_professores);
             display: block;
         }
 
-        select, input[type="date"], button {
+        select,
+        input[type="date"],
+        button {
             width: 100%;
             padding: 10px;
             margin-bottom: 20px;
@@ -94,7 +96,9 @@ $result_professores = $pdo->query($sql_professores);
             transition: all 0.3s ease;
         }
 
-        select:focus, input[type="date"]:focus, button:focus {
+        select:focus,
+        input[type="date"]:focus,
+        button:focus {
             outline: none;
             border-color: #BB8FCE;
             box-shadow: 0 0 8px #BB8FCE;
@@ -119,7 +123,9 @@ $result_professores = $pdo->query($sql_professores);
         }
     </style>
 </head>
+
 <body>
+    <a href="registrar_emprestimo.php" class="botao-voltar" title="Voltar">&#8592;</a>
     <form method="POST">
         <h3>Registrar Empréstimo</h3>
 
@@ -143,7 +149,7 @@ $result_professores = $pdo->query($sql_professores);
                 <option value="<?php echo $row['id']; ?>"><?php echo $row['titulo']; ?></option>
             <?php } ?>
         </select>
-        
+
         <label for="data_emprestimo">Data de Empréstimo:</label>
         <input type="date" name="data_emprestimo" required>
 
@@ -153,6 +159,7 @@ $result_professores = $pdo->query($sql_professores);
         <button type="submit" name="registrar_emprestimo">Registrar Empréstimo</button>
     </form>
 </body>
+
 </html>
 
 <?php $conn = null; ?>
