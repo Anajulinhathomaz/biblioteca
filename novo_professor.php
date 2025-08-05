@@ -47,11 +47,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cadastrar"])) {
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8" />
     <title>Cadastro de Professor</title>
     <style>
-        html, body {
+        html,
+        body {
             height: 100%;
             margin: 0;
             font-family: 'Segoe UI', sans-serif;
@@ -139,34 +141,53 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cadastrar"])) {
         }
 
         @keyframes fadeOut {
-            0% { opacity: 1; }
-            85% { opacity: 1; }
-            100% { opacity: 0; display: none; }
+            0% {
+                opacity: 1;
+            }
+
+            85% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+                display: none;
+            }
         }
     </style>
 </head>
+
 <body>
 
-<?php if (!empty($mensagem)): ?>
-    <div class="mensagem"><?= htmlspecialchars($mensagem) ?></div>
-<?php endif; ?>
+    <?php if (!empty($mensagem)): ?>
+        <div class="mensagem"><?= htmlspecialchars($mensagem) ?></div>
+    <?php endif; ?>
 
-<form method="POST">
-    <h2>Cadastro de Professor</h2>
+    <form method="POST">
+        <h2>Cadastro de Professor</h2>
 
-    <label>Nome:</label>
-    <input type="text" name="nome" required>
+        <label>Nome:</label>
+        <input type="text" name="nome" required>
 
-    <label>CPF:</label>
-    <input type="text" name="cpf" required>
+        <label>CPF:</label>
+        <input
+            type="text"
+            name="cpf"
+            required
+            maxlength="11"
+            minlength="11"
+            pattern="\d{11}"
+            title="Digite exatamente 11 números"
+            oninput="this.value = this.value.replace(/\D/g, '').slice(0, 11);">
 
-    <label>Email:</label>
-    <input type="email" name="email" required>
+        <label>Email:</label>
+        <input type="email" name="email" required>
 
-    <label>Senha:</label>
-    <input type="password" name="senha" required>
+        <label>Senha:</label>
+        <input type="password" name="senha" required>
 
-    <button type="submit" name="cadastrar">Cadastrar</button>
-</form>
+        <button type="submit" name="cadastrar">Cadastrar</button>
+    </form>
 </body>
+
 </html>
