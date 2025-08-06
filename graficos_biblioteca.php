@@ -1,107 +1,122 @@
-<?php
-include 'conexao.php'; // certifique-se de que $pdo está definido aqui
-
-// GRÁFICO 1 - Livros emprestados por série e período
-$stmt1 = $pdo->query("
-    SELECT serie, periodo, COUNT(*) AS total
-    FROM alunos a
-    JOIN emprestimos e ON e.aluno_id = a.id
-    GROUP BY serie, periodo
-");
-
-// GRÁFICO 2 - Leitores em destaque (mais empréstimos por série e período)
-$stmt2 = $pdo->query("
-    SELECT nome, serie, periodo, COUNT(e.id) AS total
-    FROM alunos a
-    JOIN emprestimos e ON e.aluno_id = a.id
-    GROUP BY a.id, serie, periodo
-    ORDER BY total DESC
-");
-
-// GRÁFICO 3 - Livros mais lidos por bimestre
-$stmt3 = $pdo->query("
-    SELECT l.titulo, e.bimestre, COUNT(*) AS total
-    FROM livros l
-    JOIN emprestimos e ON l.id = e.livro_id
-    GROUP BY l.id, e.bimestre
-    ORDER BY e.bimestre, total DESC
-");
-
-$dados_bimestre = [];
-while ($row = $stmt3->fetch(PDO::FETCH_ASSOC)) {
-    $dados_bimestre[$row['bimestre']][] = [$row['titulo'], (int)$row['total']];
-}
-?>
-
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
+
 <head>
-    <title>Gráficos Biblioteca</title>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
+    <title>Gráficos Biblioteca - Enrolados 🌸</title>
     <script src="https://www.gstatic.com/charts/loader.js"></script>
     <style>
-        body { font-family: Arial; padding: 30px; background: #f5f5f5; }
-        h2 { margin-top: 50px; }
-        .grafico { margin-bottom: 60px; }
+        body {
+            background: linear-gradient(to top left, #fdf6f0, #fce1ec);
+            font-family: 'Segoe UI', sans-serif;
+            padding: 30px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 1000px;
+            width: 100%;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 28px;
+            color: #6a4e77;
+            margin-bottom: 30px;
+        }
+
+        .grafico {
+            margin-bottom: 50px;
+        }
+
+        a.voltar {
+            font-size: 28px;
+            text-decoration: none;
+            color: #fff;
+            background: #d9a5c0;
+            padding: 10px 15px;
+            border-radius: 50%;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            transition: background 0.3s;
+        }
+
+        a.voltar:hover {
+            background: #c188a8;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+        }
     </style>
 </head>
-<body>
-    <h1>📚 Painel de Estatísticas da Biblioteca</h1>
 
-    <!-- Gráfico 1 -->
-    <div id="grafico1" class="grafico"></div>
-    <!-- Gráfico 2 -->
-    <div id="grafico2" class="grafico"></div>
-    <!-- Gráfico 3 -->
-    <div id="grafico3" class="grafico"></div>
+<body>
+    <a href="informacoes_gerais.php" class="voltar" title="Voltar">&#8592;</a>
+    <div class="container">
+        <h1>📊 Painel da Biblioteca</h1>
+        <div id="grafico1" class="grafico"></div>
+        <div id="grafico2" class="grafico"></div>
+        <div id="grafico3" class="grafico"></div>
+    </div>
 
     <script>
-    google.charts.load('current', {'packages':['corechart', 'bar']});
-    google.charts.setOnLoadCallback(drawCharts);
+        google.charts.load('current', {
+            'packages': ['corechart']
+        });
+        google.charts.setOnLoadCallback(drawCharts);
 
-    function drawCharts() {
-        // GRÁFICO 1 - Empréstimos por Série e Período
-        var data1 = google.visualization.arrayToDataTable([
-            ['Série - Período', 'Quantidade'],
-            <?php while ($row = $stmt1->fetch(PDO::FETCH_ASSOC)) {
-                echo "['{$row['serie']} - {$row['periodo']}', {$row['total']}],";
-            } ?>
-        ]);
-        new google.visualization.ColumnChart(document.getElementById('grafico1'))
-            .draw(data1, {
-                title: 'Empréstimos por Série e Período',
-                colors: ['#4285F4']
-            });
+        function drawCharts() {
+            fetchAndRender();
 
-        // GRÁFICO 2 - Leitores em Destaque
-        var data2 = google.visualization.arrayToDataTable([
-            ['Leitor', 'Livros Emprestados'],
-            <?php while ($row = $stmt2->fetch(PDO::FETCH_ASSOC)) {
-                $nome = "{$row['nome']} ({$row['serie']} - {$row['periodo']})";
-                echo "['$nome', {$row['total']}],";
-            } ?>
-        ]);
-        new google.visualization.BarChart(document.getElementById('grafico2'))
-            .draw(data2, {
-                title: 'Leitores em Destaque por Série e Período',
-                colors: ['#DB4437']
-            });
+            setInterval(fetchAndRender, 10000); // Atualiza a cada 10 segundos
+        }
 
-        // GRÁFICO 3 - Livros mais lidos no mes (exemplo)
-        var data3 = google.visualization.arrayToDataTable([
-            ['Livro', 'Empréstimos'],
-            <?php
-            foreach ($dados_mes[1] ?? [] as $item) {
-                echo "['{$item[0]}', {$item[1]}],";
-            }
-            ?>
-        ]);
-        new google.visualization.PieChart(document.getElementById('grafico3'))
-            .draw(data3, {
-                title: 'Livros mais lidos no mes',
-                is3D: true
-            });
-    }
+        function fetchAndRender() {
+            fetch('graficos_dados.php')
+                .then(response => response.json())
+                .then(data => {
+                    renderPieChart('grafico1', 'Empréstimos por Série e Período', data.grafico1);
+                    renderPieChart('grafico2', 'Leitores em Destaque', data.grafico2);
+                    renderPieChart('grafico3', 'Livros Mais Lidos (Bimestre 1)', data.grafico3["1"] || []);
+                });
+        }
+
+        function renderPieChart(elementId, title, chartData) {
+            const data = new google.visualization.DataTable();
+            data.addColumn('string', 'Categoria');
+            data.addColumn('number', 'Valor');
+            data.addRows(chartData);
+
+            const options = {
+                title: title,
+                is3D: true,
+                backgroundColor: 'transparent',
+                animation: {
+                    duration: 1000,
+                    easing: 'out',
+                    startup: true
+                },
+                colors: ['#f8c8dc', '#fddde6', '#e6b0aa', '#f7cac9', '#ecd9c6', '#d4a5a5', '#ffe0ac', '#cdb4db']
+            };
+
+            const chart = new google.visualization.PieChart(document.getElementById(elementId));
+            chart.draw(data, options);
+        }
     </script>
 </body>
+
 </html>

@@ -11,24 +11,23 @@ if (isset($_POST["registrar_emprestimo"])) {
 
     if (isset($_SESSION['professor_id'])) {
         if ($data_devolucao < $data_emprestimo) {
-            echo "<script>alert('Erro: A data de devolução não pode ser anterior à data de empréstimo.');</script>";
+            $_SESSION['erro'] = "Erro: A data de devolução não pode ser anterior à data de empréstimo.";
         } else {
             $sql = "INSERT INTO emprestimos (aluno_id, livro_id, professor_id, data_emprestimo, data_devolucao) VALUES (?, ?, ?, ?, ?)";
             $stmt = $pdo->prepare($sql);
 
             if ($stmt->execute([$aluno_id, $livro_id, $professor_id, $data_emprestimo, $data_devolucao])) {
-                echo "<script>alert('Empréstimo registrado com sucesso!');</script>";
+                $_SESSION['sucesso'] = "Empréstimo registrado com sucesso!";
+                header("Location: registrar_emprestimo.php");
                 exit();
             } else {
-                echo "<script>alert('Erro ao registrar empréstimo!');</script>";
+                $_SESSION['erro'] = "Erro ao registrar empréstimo.";
             }
         }
     } else {
-        echo "<script>alert('Erro: Professor não está logado.');</script>";
+        $_SESSION['erro'] = "Erro: Professor não está logado.";
     }
 }
-
-$status = 0;
 
 $sql_alunos = "SELECT * FROM alunos";
 $result_alunos = $pdo->query($sql_alunos);
@@ -57,6 +56,7 @@ $result_professores = $pdo->query($sql_professores);
             display: flex;
             justify-content: center;
             align-items: center;
+            position: relative;
         }
 
         form {
@@ -117,36 +117,97 @@ $result_professores = $pdo->query($sql_professores);
             transform: scale(1.05);
         }
 
-        .error {
-            color: red;
+        .mensagem {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1rem;
             text-align: center;
+            z-index: 10;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            animation: aparecer 0.3s ease-out;
+        }
+
+        .sucesso {
+            background-color: #D4EFDF;
+            color: #2E8B57;
+            border: 1px solid #2E8B57;
+        }
+
+        .erro {
+            background-color: #F5B7B1;
+            color: #A93226;
+            border: 1px solid #A93226;
+        }
+
+        @keyframes aparecer {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+        }
+
+        .botao-voltar {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            font-size: 24px;
+            text-decoration: none;
+            background: rgba(0, 0, 0, 0.2);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 50%;
+            font-weight: bold;
+        }
+
+        .botao-voltar:hover {
+            background: rgba(0, 0, 0, 0.4);
         }
     </style>
 </head>
 
 <body>
-    <a href="registrar_emprestimo.php" class="botao-voltar" title="Voltar">&#8592;</a>
+
+    <?php if (isset($_SESSION['sucesso'])): ?>
+        <div class="mensagem sucesso"><?= $_SESSION['sucesso'];
+                                        unset($_SESSION['sucesso']); ?></div>
+    <?php elseif (isset($_SESSION['erro'])): ?>
+        <div class="mensagem erro"><?= $_SESSION['erro'];
+                                    unset($_SESSION['erro']); ?></div>
+    <?php endif; ?>
+
+    <a href="painel.php" class="botao-voltar" title="Voltar">&#8592;</a>
+
     <form method="POST">
         <h3>Registrar Empréstimo</h3>
 
         <label for="aluno_id">Aluno:</label>
         <select name="aluno_id" required>
             <?php while ($row = $result_alunos->fetch(PDO::FETCH_ASSOC)) { ?>
-                <option value="<?php echo $row['id']; ?>"><?php echo $row['nome']; ?></option>
+                <option value="<?= $row['id']; ?>"><?= $row['nome']; ?></option>
             <?php } ?>
         </select>
 
         <label for="professor_id">Professor:</label>
         <select name="professor_id" required>
             <?php while ($row = $result_professores->fetch(PDO::FETCH_ASSOC)) { ?>
-                <option value="<?php echo $row['id']; ?>"><?php echo $row['nome']; ?></option>
+                <option value="<?= $row['id']; ?>"><?= $row['nome']; ?></option>
             <?php } ?>
         </select>
 
         <label for="livro_id">Livro:</label>
         <select name="livro_id" required>
             <?php while ($row = $result_livros->fetch(PDO::FETCH_ASSOC)) { ?>
-                <option value="<?php echo $row['id']; ?>"><?php echo $row['titulo']; ?></option>
+                <option value="<?= $row['id']; ?>"><?= $row['titulo']; ?></option>
             <?php } ?>
         </select>
 
@@ -158,8 +219,7 @@ $result_professores = $pdo->query($sql_professores);
 
         <button type="submit" name="registrar_emprestimo">Registrar Empréstimo</button>
     </form>
+
 </body>
 
 </html>
-
-<?php $conn = null; ?>
