@@ -5,19 +5,36 @@ try {
   $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
   $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+  // Alterar para "Devolvido"
+  if (isset($_GET['acao']) && $_GET['acao'] == 'devolver' && isset($_GET['id'])) {
+    $id = intval($_GET['id']);
+    $stmtUpdate = $pdo->prepare("UPDATE emprestimos SET status = 2 WHERE id = :id");
+    $stmtUpdate->execute([':id' => $id]);
+    $mensagem = "Empréstimo marcado como devolvido!";
+  }
+
+  // Excluir empréstimo
+  if (isset($_GET['acao']) && $_GET['acao'] == 'excluir' && isset($_GET['id'])) {
+    $id = intval($_GET['id']);
+    $stmtDelete = $pdo->prepare("DELETE FROM emprestimos WHERE id = :id");
+    $stmtDelete->execute([':id' => $id]);
+    $mensagem = "Empréstimo excluído com sucesso!";
+  }
+
+  // Buscar dados
   $sql = "SELECT 
-        e.id AS id, 
-        a.nome AS al, 
-        p.nome AS nome, 
-        l.titulo AS titulo,
-        MIN(e.data_emprestimo) AS data_emprestimo, 
-        MAX(e.data_devolucao) AS data_devolucao,
-        e.status
-        FROM emprestimos e
-        INNER JOIN alunos a ON e.aluno_id = a.id
-        INNER JOIN professores p ON e.professor_id = p.id
-        INNER JOIN livros l ON e.livro_id = l.id
-        GROUP BY e.id, a.nome, p.nome, l.titulo;";
+                e.id AS id, 
+                a.nome AS al, 
+                p.nome AS nome, 
+                l.titulo AS titulo,
+                MIN(e.data_emprestimo) AS data_emprestimo, 
+                MAX(e.data_devolucao) AS data_devolucao,
+                e.status
+            FROM emprestimos e
+            INNER JOIN alunos a ON e.aluno_id = a.id
+            INNER JOIN professores p ON e.professor_id = p.id
+            INNER JOIN livros l ON e.livro_id = l.id
+            GROUP BY e.id, a.nome, p.nome, l.titulo;";
 
   $stmt = $pdo->prepare($sql);
   $stmt->execute();
@@ -53,13 +70,34 @@ try {
       color: #f9f9f9;
     }
 
+    .botao-voltar {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 24px;
+      text-decoration: none;
+      color: #ffffff;
+      background-color: rgba(130, 50, 180, 0.25);
+      padding: 10px 14px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      backdrop-filter: blur(5px);
+    }
+
+    .botao-voltar:hover {
+      background-color: rgba(130, 50, 180, 0.5);
+      transform: scale(1.1);
+    }
+
     .container {
       background: rgba(0, 0, 0, 0.6);
       backdrop-filter: blur(6px);
       border-radius: 15px;
       padding: 30px;
       width: 100%;
-      max-width: 1000px;
+      max-width: 1100px;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
     }
 
@@ -88,18 +126,36 @@ try {
       background-color: rgba(171, 70, 209, 0.9);
       color: #fff;
       font-weight: 600;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.3);
     }
 
     tr:nth-child(even) {
       background-color: rgba(255, 255, 255, 0.05);
     }
 
-    p {
-      color: #ffd1e6;
+    .mensagem {
       text-align: center;
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 15px;
       font-size: 18px;
-      margin-top: 20px;
+    }
+
+    a.botao {
+      padding: 5px 10px;
+      border-radius: 5px;
+      text-decoration: none;
+      color: white;
+      font-weight: bold;
+    }
+
+    .devolvido {
+      background: seagreen;
+    }
+
+    .excluir {
+      background: crimson;
     }
 
     @media (max-width: 600px) {
@@ -120,11 +176,19 @@ try {
 </head>
 
 <body>
+
+  <a href="informacoes_gerais.php" class="botao-voltar" title="Voltar">&#8592;</a>
+
   <div class="container">
     <h2>Lista de Empréstimos</h2>
-    <?php if (isset($erro)): ?>
-      <p><?= htmlspecialchars($erro) ?></p>
-    <?php elseif (!empty($emprestimos)): ?>
+
+    <?php if (isset($mensagem)): ?>
+      <div class="mensagem"><?= htmlspecialchars($mensagem) ?></div>
+    <?php elseif (isset($erro)): ?>
+      <div class="mensagem" style="background: rgba(255,0,0,0.5);"><?= htmlspecialchars($erro) ?></div>
+    <?php endif; ?>
+
+    <?php if (!empty($emprestimos)): ?>
       <table>
         <tr>
           <th>Aluno</th>
@@ -133,34 +197,52 @@ try {
           <th>Data de Empréstimo</th>
           <th>Data de Devolução</th>
           <th>Status</th>
+          <th>Devolver</th>
+          <th>Excluir</th>
         </tr>
-        <?php foreach ($emprestimos as $emprestimo): ?>
+        <?php
+        $hoje = date('Y-m-d');
+        foreach ($emprestimos as $emprestimo):
+          $statusTexto = '';
+
+          if ($emprestimo['status'] == 2) {
+            $statusTexto = 'Devolvido';
+          } else {
+            if ($emprestimo['data_devolucao'] < $hoje) {
+              $statusTexto = 'Atrasado';
+            } else {
+              $statusTexto = 'Em andamento';
+            }
+          }
+        ?>
           <tr>
             <td><?= htmlspecialchars($emprestimo['al']) ?></td>
             <td><?= htmlspecialchars($emprestimo['nome']) ?></td>
             <td><?= htmlspecialchars($emprestimo['titulo']) ?></td>
             <td><?= htmlspecialchars($emprestimo['data_emprestimo']) ?></td>
             <td><?= htmlspecialchars($emprestimo['data_devolucao']) ?></td>
+            <td><?= $statusTexto ?></td>
             <td>
-              <?php
-              if ($emprestimo['status'] == 0) {
-                echo 'Em andamento';
-              } elseif ($emprestimo['status'] == 1) {
-                echo 'Atrasado';
-              } elseif ($emprestimo['status'] == 2) {
-                echo 'Devolvido';
-              } else {
-                echo 'Desconhecido';
-              }
-              ?>
+              <?php if ($emprestimo['status'] != 2): ?>
+                <a href="?acao=devolver&id=<?= $emprestimo['id'] ?>"
+                  class="botao devolvido"
+                  onclick="return confirm('Marcar como devolvido?')">Devolver</a>
+              <?php else: ?>
+                —
+              <?php endif; ?>
             </td>
             <td>
+              <a href="?acao=excluir&id=<?= $emprestimo['id'] ?>"
+                class="botao excluir"
+                onclick="return confirm('Tem certeza que deseja excluir este empréstimo?')">Excluir</a>
+            </td>
           </tr>
         <?php endforeach; ?>
       </table>
     <?php else: ?>
-      <p>Nenhum empréstimo encontrado.</p>
+      <p style="text-align:center; color:#ffd1e6;">Nenhum empréstimo encontrado.</p>
     <?php endif; ?>
   </div>
 </body>
+
 </html>

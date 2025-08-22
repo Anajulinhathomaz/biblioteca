@@ -15,6 +15,7 @@ try {
 }
 
 $mensagem = "";
+$sucesso = false; // controla se vai redirecionar
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cadastrar"])) {
     $nome = trim($_POST["nome"]);
@@ -34,6 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cadastrar"])) {
 
             if ($stmt->execute([$nome, $cpf, $email, $senhaHash])) {
                 $mensagem = "Professor cadastrado com sucesso!";
+                $sucesso = true;
             } else {
                 $mensagem = "Erro ao cadastrar professor!";
             }
@@ -161,6 +163,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cadastrar"])) {
 
     <?php if (!empty($mensagem)): ?>
         <div class="mensagem"><?= htmlspecialchars($mensagem) ?></div>
+        <?php if ($sucesso): ?>
+            <script>
+                setTimeout(() => {
+                    window.location.href = "novo_professor.php";
+                }, 2500);
+            </script>
+        <?php endif; ?>
     <?php endif; ?>
 
     <form method="POST">

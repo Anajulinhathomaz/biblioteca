@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
   <title>Cadastros</title>
@@ -16,13 +17,14 @@
       align-items: center;
       justify-content: center;
       color: #F8F1FF;
+      position: relative;
     }
 
     .container {
       background: rgba(0, 0, 0, 0.6);
       padding: 30px;
       border-radius: 15px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
       width: 320px;
       backdrop-filter: blur(5px);
       display: flex;
@@ -34,7 +36,7 @@
       margin-bottom: 30px;
       color: #F8F1FF;
       font-weight: 700;
-      text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
       text-align: center;
     }
 
@@ -45,7 +47,7 @@
       padding: 15px 0;
       width: 100%;
       border-radius: 10px;
-      box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
       font-weight: 600;
       font-size: 18px;
       transition: background-color 0.3s ease, transform 0.3s ease;
@@ -62,6 +64,38 @@
       color: white;
     }
 
+    /* seta pastel estilo Enrolados */
+    .back-arrow {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      width: 55px;
+      height: 55px;
+      background: #f7d6f7;
+      /* fundo lilás claro */
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .back-arrow::before {
+      content: "←";
+      font-size: 26px;
+      color: #6C3483;
+      /* roxo principal */
+      font-weight: bold;
+    }
+
+    .back-arrow:hover {
+      background: #dcb0ff;
+      /* tom mais forte no hover */
+      transform: scale(1.1);
+    }
+
     @media (max-width: 420px) {
       .container {
         width: 100%;
@@ -73,7 +107,11 @@
     }
   </style>
 </head>
+
 <body>
+
+  <!-- seta para voltar -->
+  <a href="painel.php" class="back-arrow" title="Voltar"></a>
 
   <div class="container">
     <h1>Cadastros</h1>
@@ -84,4 +122,5 @@
   </div>
 
 </body>
+
 </html>

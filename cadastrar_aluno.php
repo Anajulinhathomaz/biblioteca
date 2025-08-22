@@ -21,6 +21,7 @@ try {
 }
 
 $mensagem = "";
+$redirect = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["cadastrar_aluno"])) {
     $nome = trim($_POST["nome"] ?? '');
@@ -42,6 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["cadastrar_aluno"])) {
 
             if ($stmt->execute([$nome, $email, $serie])) {
                 $mensagem = "Aluno cadastrado com sucesso!";
+                $redirect = true; // marca para redirecionar
             } else {
                 $mensagem = "Erro ao cadastrar aluno!";
             }
@@ -52,6 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["cadastrar_aluno"])) {
 
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8" />
     <title>Dashboard - Cadastrar Aluno</title>
@@ -70,6 +73,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["cadastrar_aluno"])) {
             overflow: hidden;
         }
 
+        /* Botão seta voltar */
+        .voltar {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 45px;
+            height: 45px;
+            background: url('https://cdn-icons-png.flaticon.com/512/271/271220.png') no-repeat center;
+            background-size: contain;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            z-index: 1001;
+        }
+
+        .voltar:hover {
+            transform: scale(1.1);
+        }
+
         .mensagem {
             position: fixed;
             top: 30px;
@@ -79,15 +100,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["cadastrar_aluno"])) {
             color: #4b2e15;
             padding: 16px 30px;
             border-radius: 10px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
             font-weight: bold;
             z-index: 1000;
             animation: fadeOut 6s ease forwards;
         }
 
         @keyframes fadeOut {
-            0%, 80% { opacity: 1; }
-            100% { opacity: 0; display: none; }
+
+            0%,
+            80% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+                display: none;
+            }
         }
 
         .container {
@@ -105,7 +134,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["cadastrar_aluno"])) {
             color: #E0CFFD;
             margin-bottom: 30px;
             font-size: 26px;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
         }
 
         form {
@@ -154,26 +183,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["cadastrar_aluno"])) {
         }
     </style>
 </head>
+
 <body>
 
-<?php if (!empty($mensagem)): ?>
-    <div class="mensagem"><?= htmlspecialchars($mensagem) ?></div>
-<?php endif; ?>
+    <!-- Botão voltar -->
+    <a href="painel.php" class="voltar" title="Voltar para o painel"></a>
 
-<div class="container">
-    <h2>Cadastrar Aluno</h2>
-    <form method="POST" action="">
-        <label for="nome">Nome:</label>
-        <input type="text" id="nome" name="nome" required />
+    <?php if (!empty($mensagem)): ?>
+        <div class="mensagem"><?= htmlspecialchars($mensagem) ?></div>
+        <?php if ($redirect): ?>
+            <script>
+                setTimeout(function() {
+                    window.location.href = "painel.php";
+                }, 2500);
+            </script>
+        <?php endif; ?>
+    <?php endif; ?>
 
-        <label for="serie">Série:</label>
-        <input type="text" id="serie" name="serie" required />
+    <div class="container">
+        <h2>Cadastrar Aluno</h2>
+        <form method="POST" action="">
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" name="nome" required />
 
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required />
+            <label for="serie">Série:</label>
+            <input type="text" id="serie" name="serie" required />
 
-        <button type="submit" name="cadastrar_aluno">Cadastrar Aluno</button>
-    </form>
-</div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required />
+
+            <button type="submit" name="cadastrar_aluno">Cadastrar Aluno</button>
+        </form>
+    </div>
 </body>
+
 </html>
