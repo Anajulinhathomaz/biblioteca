@@ -166,7 +166,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["cadastrar"])) {
         <?php if ($sucesso): ?>
             <script>
                 setTimeout(() => {
-                    window.location.href = "novo_professor.php";
+                    window.location.href = "cadastros.php"; // agora volta para a página de cadastros
                 }, 2500);
             </script>
         <?php endif; ?>

@@ -40,6 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8" />
     <title>Busca e Cadastro de Livros</title>
@@ -52,32 +53,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         body {
-    background: url('./imagens/enrolados_biblioteca5.png') no-repeat center center fixed;
-    background-size: cover;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 40px 20px;
-    color: #eee;
-}
+            background: url('./imagens/enrolados_biblioteca5.png') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            color: #eee;
+        }
 
-.container {
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(8px);
-    border-radius: 16px;
-    padding: 30px;
-    width: 400px;
-    max-width: 90%;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.5);
-    text-align: center;
-    color: #f0e6ff;
-    margin-bottom: 30px;
-}
+        .container {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            border-radius: 16px;
+            padding: 30px;
+            width: 400px;
+            max-width: 90%;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            color: #f0e6ff;
+            margin-bottom: 30px;
+        }
+
         h1 {
             margin-bottom: 25px;
             font-size: 26px;
-            text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
         }
 
         input[type="text"] {
@@ -87,16 +89,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             border: none;
             border-radius: 8px;
             font-size: 16px;
-            background-color: rgba(255,255,255,0.1);
+            background-color: rgba(255, 255, 255, 0.1);
             color: #eee;
-            box-shadow: inset 0 0 5px rgba(255,255,255,0.2);
+            box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.2);
             transition: background-color 0.3s ease;
         }
+
         input[type="text"]::placeholder {
             color: #ccc;
         }
+
         input[type="text"]:focus {
-            background-color: rgba(255,255,255,0.25);
+            background-color: rgba(255, 255, 255, 0.25);
             outline: none;
             box-shadow: 0 0 8px rgba(171, 70, 209, 0.9);
         }
@@ -107,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             overflow-y: auto;
             background: rgba(0, 0, 0, 0.5);
             border-radius: 14px;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
             padding: 20px;
             display: none;
             color: #f0e6ff;
@@ -124,6 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             box-shadow: 0 0 10px rgba(171, 70, 209, 0.6);
             transition: background 0.3s ease;
         }
+
         .livro:hover {
             background: rgba(171, 70, 209, 0.25);
             box-shadow: 0 0 20px rgba(171, 70, 209, 0.9);
@@ -145,7 +150,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .livro h3 {
             margin-bottom: 8px;
             color: #ddaaff;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
         }
 
         .descricao {
@@ -171,6 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             box-shadow: 0 0 10px rgba(171, 70, 209, 0.7);
             transition: background 0.3s ease, transform 0.15s ease;
         }
+
         button:hover {
             background: rgba(171, 70, 209, 1);
             transform: scale(1.05);
@@ -209,52 +215,60 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translate(-50%, -60%); }
-            to { opacity: 1; transform: translate(-50%, -50%); }
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
         }
     </style>
 </head>
+
 <body>
 
-<div class="container">
-    <h1>Buscar e Cadastrar Livro</h1>
-    <input type="text" id="busca" placeholder="Digite o nome do livro" autocomplete="off" />
-</div>
+    <div class="container">
+        <h1>Buscar e Cadastrar Livro</h1>
+        <input type="text" id="busca" placeholder="Digite o nome do livro" autocomplete="off" />
+    </div>
 
-<div id="resultados"></div>
-<div id="mensagem" class="mensagem"></div>
+    <div id="resultados"></div>
+    <div id="mensagem" class="mensagem"></div>
 
-<script>
-const input = document.getElementById('busca');
-const resultados = document.getElementById('resultados');
-const mensagem = document.getElementById('mensagem');
+    <script>
+        const input = document.getElementById('busca');
+        const resultados = document.getElementById('resultados');
+        const mensagem = document.getElementById('mensagem');
 
-input.addEventListener('keyup', function() {
-    const termo = input.value.trim();
-    if (termo.length < 3) {
-        resultados.innerHTML = '';
-        resultados.style.display = 'none';
-        return;
-    }
+        input.addEventListener('keyup', function() {
+            const termo = input.value.trim();
+            if (termo.length < 3) {
+                resultados.innerHTML = '';
+                resultados.style.display = 'none';
+                return;
+            }
 
-    fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(termo)}`)
-        .then(res => res.json())
-        .then(data => {
-            resultados.innerHTML = '';
+            fetch(`https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(termo)}`)
+                .then(res => res.json())
+                .then(data => {
+                    resultados.innerHTML = '';
 
-            if (data.items) {
-                resultados.style.display = 'block';
-                data.items.forEach(item => {
-                    const info = item.volumeInfo;
-                    const titulo = info.title || 'Sem título';
-                    const autores = info.authors ? info.authors.join(', ') : 'Desconhecido';
-                    const descricao = info.description || 'Sem descrição disponível.';
-                    const imagem = info.imageLinks ? info.imageLinks.thumbnail : 'https://via.placeholder.com/100x150?text=Sem+Capa';
-                    const isbn = info.industryIdentifiers ? info.industryIdentifiers[0].identifier : '';
+                    if (data.items) {
+                        resultados.style.display = 'block';
+                        data.items.forEach(item => {
+                            const info = item.volumeInfo;
+                            const titulo = info.title || 'Sem título';
+                            const autores = info.authors ? info.authors.join(', ') : 'Desconhecido';
+                            const descricao = info.description || 'Sem descrição disponível.';
+                            const imagem = info.imageLinks ? info.imageLinks.thumbnail : 'https://via.placeholder.com/100x150?text=Sem+Capa';
+                            const isbn = info.industryIdentifiers ? info.industryIdentifiers[0].identifier : '';
 
-                    const div = document.createElement('div');
-                    div.className = 'livro';
-                    div.innerHTML = `
+                            const div = document.createElement('div');
+                            div.className = 'livro';
+                            div.innerHTML = `
                         <img src="${imagem}" alt="Capa do livro">
                         <div>
                             <h3>${titulo}</h3>
@@ -264,38 +278,48 @@ input.addEventListener('keyup', function() {
                             <button onclick="cadastrarLivro('${titulo.replace(/'/g, "\\'")}', '${autores.replace(/'/g, "\\'")}', '${isbn}')">Cadastrar</button>
                         </div>
                     `;
-                    resultados.appendChild(div);
+                            resultados.appendChild(div);
+                        });
+                    } else {
+                        resultados.style.display = 'block';
+                        resultados.innerHTML = '<p>Nenhum livro encontrado.</p>';
+                    }
                 });
+        });
+
+        function cadastrarLivro(titulo, autor, isbn) {
+            const formData = new FormData();
+            formData.append('titulo', titulo);
+            formData.append('autor', autor);
+            formData.append('isbn', isbn);
+
+            fetch('', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(response => {
+                    exibirMensagem(response.message, response.status);
+                });
+        }
+
+        function exibirMensagem(msg, tipo) {
+            mensagem.textContent = msg;
+            mensagem.className = 'mensagem ' + tipo;
+            mensagem.style.display = 'block';
+
+            if (tipo === 'sucesso') {
+                setTimeout(() => {
+                    window.location.href = "cadastros.php"; // Redireciona após sucesso
+                }, 2500);
             } else {
-                resultados.style.display = 'block';
-                resultados.innerHTML = '<p>Nenhum livro encontrado.</p>';
+                setTimeout(() => {
+                    mensagem.style.display = 'none';
+                }, 3000);
             }
-        });
-});
-
-function cadastrarLivro(titulo, autor, isbn) {
-    const formData = new FormData();
-    formData.append('titulo', titulo);
-    formData.append('autor', autor);
-    formData.append('isbn', isbn);
-
-    fetch('', { method: 'POST', body: formData })
-        .then(res => res.json())
-        .then(response => {
-            exibirMensagem(response.message, response.status);
-        });
-}
-
-function exibirMensagem(msg, tipo) {
-    mensagem.textContent = msg;
-    mensagem.className = 'mensagem ' + tipo;
-    mensagem.style.display = 'block';
-
-    setTimeout(() => {
-        mensagem.style.display = 'none';
-    }, 3000);
-}
-</script>
+        }
+    </script>
 
 </body>
+
 </html>

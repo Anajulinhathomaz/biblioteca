@@ -194,7 +194,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["cadastrar_aluno"])) {
         <?php if ($redirect): ?>
             <script>
                 setTimeout(function() {
-                    window.location.href = "painel.php";
+                    window.location.href = "cadastros.php";
                 }, 2500);
             </script>
         <?php endif; ?>
