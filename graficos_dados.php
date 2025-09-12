@@ -1,39 +1,48 @@
 <?php
-include 'conexao.php';
+// Inclui a conexão
+require_once 'conexao.php';
 
-function fetchData($pdo)
-{
-    // GRÁFICO 1
-    $stmt1 = $pdo->query("SELECT serie, periodo, COUNT(*) AS total FROM alunos a JOIN emprestimos e ON e.aluno_id = a.id GROUP BY serie, periodo");
+// 1. 10 alunos que mais leram livros
+$sqlTopAlunos = "
+    SELECT a.id, a.nome, a.serie, a.periodo, COUNT(e.id) AS total_emprestimos
+    FROM alunos a
+    JOIN emprestimos e ON e.aluno_id = a.id
+    WHERE e.status = 2
+    GROUP BY a.id
+    ORDER BY total_emprestimos DESC
+    LIMIT 10
+";
+$topAlunos = $pdo->query($sqlTopAlunos)->fetchAll(PDO::FETCH_ASSOC);
 
-    // GRÁFICO 2
-    $stmt2 = $pdo->query("SELECT nome, serie, periodo, COUNT(e.id) AS total FROM alunos a JOIN emprestimos e ON e.aluno_id = a.id GROUP BY a.id, serie, periodo ORDER BY total DESC");
+// 2. 10 livros mais lidos
+$sqlTopLivros = "
+    SELECT l.id, l.titulo, l.autor, l.isbn, COUNT(e.id) AS total_emprestimos
+    FROM livros l
+    JOIN emprestimos e ON e.livro_id = l.id
+    WHERE e.status = 2
+    GROUP BY l.id
+    ORDER BY total_emprestimos DESC
+    LIMIT 10
+";
+$topLivros = $pdo->query($sqlTopLivros)->fetchAll(PDO::FETCH_ASSOC);
 
-    // GRÁFICO 3
-    $stmt3 = $pdo->query("SELECT l.titulo, e.bimestre, COUNT(*) AS total FROM livros l JOIN emprestimos e ON l.id = e.livro_id GROUP BY l.id, e.bimestre ORDER BY e.bimestre, total DESC");
+// 3. 10 turmas (séries) com mais leitores
+$sqlTopSeries = "
+    SELECT a.serie, COUNT(DISTINCT a.id) AS total_alunos
+    FROM alunos a
+    JOIN emprestimos e ON e.aluno_id = a.id
+    WHERE e.status = 2
+    GROUP BY a.serie
+    ORDER BY total_alunos DESC
+    LIMIT 10
+";
+$topSeries = $pdo->query($sqlTopSeries)->fetchAll(PDO::FETCH_ASSOC);
 
-    $data = [
-        'grafico1' => [],
-        'grafico2' => [],
-        'grafico3' => []
-    ];
-
-    while ($row = $stmt1->fetch(PDO::FETCH_ASSOC)) {
-        $data['grafico1'][] = ["{$row['serie']} - {$row['periodo']}", (int)$row['total']];
-    }
-
-    while ($row = $stmt2->fetch(PDO::FETCH_ASSOC)) {
-        $data['grafico2'][] = ["{$row['nome']} ({$row['serie']} - {$row['periodo']})", (int)$row['total']];
-    }
-
-    while ($row = $stmt3->fetch(PDO::FETCH_ASSOC)) {
-        if (!isset($data['grafico3'][$row['bimestre']])) $data['grafico3'][$row['bimestre']] = [];
-        $data['grafico3'][$row['bimestre']][] = [$row['titulo'], (int)$row['total']];
-    }
-
-    return $data;
-}
-
+// Retorna como JSON
 header('Content-Type: application/json');
-echo json_encode(fetchData($pdo));
-exit;
+echo json_encode([
+    'top_alunos' => $topAlunos,
+    'top_livros' => $topLivros,
+    'top_series' => $topSeries
+], JSON_PRETTY_PRINT);
+?>
