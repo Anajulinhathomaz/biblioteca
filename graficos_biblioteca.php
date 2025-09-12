@@ -81,7 +81,7 @@
 
         async function drawCharts() {
             // Chama o backend
-            const response = await fetch('backend.php'); // ajuste o nome do seu arquivo PHP
+            const response = await fetch('graficos_dados.php'); // ajuste o nome do seu arquivo PHP
             const data = await response.json();
 
             // === Top Alunos ===
